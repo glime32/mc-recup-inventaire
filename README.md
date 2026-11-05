@@ -1,34 +1,39 @@
-# mc-recup-inventaire
+<p align="center"><img src="docs/banner-mc-recup-inventaire.png" alt="mc-recup-inventaire" width="100%"></p>
 
-Récupère l'inventaire d'un joueur depuis la sauvegarde d'un serveur Minecraft (Paper, Purpur, Spigot...) et le remet dans une copie solo du monde.
+<p align="center"><img src="https://img.shields.io/badge/minecraft-Java-62b47a?style=flat-square" alt="minecraft"> <img src="https://img.shields.io/badge/python-3-3776ab?style=flat-square" alt="python"> <img src="https://img.shields.io/badge/license-MIT-610089?style=flat-square" alt="license"></p>
 
-## Le problème
+<p align="center"><a href="README.fr.md">🇫🇷 Version française</a></p>
 
-Quand un serveur ferme, on peut récupérer son monde depuis une sauvegarde `.tar.gz` de l'hébergeur et le jouer en solo. Sauf qu'en arrivant dedans, on a un inventaire vide : en solo, Minecraft utilise le joueur stocké dans `level.dat` (qu'il crée vide) et ignore les fichiers `playerdata/` du serveur. Pire, en quittant le monde il écrase ton fichier joueur avec la version vide.
+**Get your inventory back from a Minecraft server backup** (Paper, Purpur, Spigot…) into a singleplayer copy of the world.
 
-## Ce que fait le script
+## The problem
 
-1. parcourt l'archive sans tout extraire et y trouve tes fichiers (`playerdata`, `stats`, `advancements`) dans le dossier du monde ;
-2. cherche aussi l'UUID « hors-ligne » au cas où le serveur était en `online-mode=false`, et renomme le fichier avec ton vrai UUID ;
-3. affiche ce qu'il a trouvé (inventaire, armure, ender chest, position) **avant de toucher à quoi que ce soit** ;
-4. fait une copie de sécurité de `level.dat` et des dossiers joueurs ;
-5. remet tes fichiers et enlève le joueur vide de `level.dat`.
+When a server shuts down, you can grab its world from the host's `.tar.gz` backup and play it solo. But you spawn with an empty inventory: in singleplayer Minecraft uses the player stored in `level.dat` (which it creates empty) and ignores the server's `playerdata/` files. Worse, when you leave, it overwrites your player file with the empty one.
 
-Tu réapparais à l'endroit où tu étais quand le serveur a fermé, avec ton stuff.
+<p align="center"><img src="docs/mc-recup.png" width="100%" alt="example run"><br><sub>example run</sub></p>
 
-## Utilisation
+## What it does
+
+1. scans the archive without extracting everything and finds your files (`playerdata`, `stats`, `advancements`);
+2. also looks for the offline-mode UUID (`online-mode=false` servers) and renames it to your real UUID;
+3. shows what it found (inventory, armor, ender chest, position) **before touching anything**;
+4. backs up `level.dat` and the player folders;
+5. restores your files and removes the empty player from `level.dat`.
+
+## Use it
 
 ```bash
 pip install nbtlib
-python recup_inventaire.py --archive sauvegarde.tar.gz --monde-nom survie --pseudo Steve
+curl -O https://raw.githubusercontent.com/glime32/mc-recup-inventaire/main/recup_inventaire.py
+python recup_inventaire.py --archive backup.tar.gz --monde-nom world --pseudo YourName
 ```
 
 | Option | |
 |---|---|
-| `--archive` | la sauvegarde `.tar.gz` du serveur |
-| `--monde-nom` | nom du dossier du monde dans l'archive |
-| `--pseudo` | ton pseudo |
-| `--uuid` | ton UUID (sinon récupéré auprès de Mojang) |
-| `--monde` | chemin du monde solo (sinon cherché dans les profils Modrinth App et `.minecraft`) |
+| `--archive` | server backup `.tar.gz` |
+| `--monde-nom` | world folder name inside the archive |
+| `--pseudo` | your username |
+| `--uuid` | your UUID (otherwise fetched from Mojang) |
+| `--monde` | path to the singleplayer world (otherwise found in Modrinth App profiles and `.minecraft`) |
 
-Fermer Minecraft avant de valider. Testé avec une sauvegarde MineStrator et Minecraft Java via Modrinth App.
+Close Minecraft before confirming.
